@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,13 +7,13 @@ public class BallControl : MonoBehaviour
      // Titik asal lintasan bola saat ini
     private Vector2 trajectoryOrigin;
     // Untuk mengakses informasi titik asal lintasan
-   
+
     // Rigidbody 2D bola
-    private Rigidbody2D rigidBody2D;
- 
+    private Rigidbody2D rigidbody2D;
+
     // Besarnya gaya awal yang diberikan untuk mendorong bola
-    public float xInitialForce;
-    public float yInitialForce;
+    private float initialForceX = 10;
+    private float initialForceY = 10;
     // Start is called before the first frame update
 
 
@@ -37,27 +37,22 @@ public class BallControl : MonoBehaviour
         transform.position = Vector2.zero;
  
         // Reset kecepatan menjadi (0,0)
-        rigidBody2D.velocity = Vector2.zero;
+        rigidbody2D.velocity = Vector2.zero;
     }
 
     void PushBall()
     {
-        // Tentukan nilai komponen y dari gaya dorong antara -yInitialForce dan yInitialForce
-        float yRandomInitialForce = Random.Range(-yInitialForce, yInitialForce);
+        float randomInitialForceY = Random.Range(-initialForceY, initialForceY);
 
-        // Tentukan nilai acak antara 0 (inklusif) dan 2 (eksklusif)
-        float randomDirection = Random.Range(0, 2);
+        int direction = Random.Range(0, 2);
 
-        // Jika nilainya di bawah 1, bola bergerak ke kiri. 
-        // Jika tidak, bola bergerak ke kanan.
-        if (randomDirection < 1.0f)
+        if (direction < 1.0f)
         {
-            // Gunakan gaya untuk menggerakkan bola ini.
-            rigidBody2D.AddForce(new Vector2(-xInitialForce, yRandomInitialForce));
+            rigidbody2D.velocity = Vector2.ClampMagnitude(new Vector2(-initialForceX, randomInitialForceY), 10.0f);
         }
         else
         {
-            rigidBody2D.AddForce(new Vector2(xInitialForce, yRandomInitialForce));
+            rigidbody2D.velocity = Vector2.ClampMagnitude(new Vector2(initialForceX, randomInitialForceY), 10.0f);
         }
     }
 
@@ -73,7 +68,7 @@ public class BallControl : MonoBehaviour
     void Start()
     {
         trajectoryOrigin = transform.position;
-        rigidBody2D = GetComponent<Rigidbody2D>();
+        rigidbody2D = GetComponent<Rigidbody2D>();
  
         // Mulai game
         RestartGame();
